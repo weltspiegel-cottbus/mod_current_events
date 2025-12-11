@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="module" client="site" method="upgrade">
+    <name>MOD_CINETIXX_EVENTS</name>
+    <version>0.1.0</version>
+    <creationDate>Dezember 2025</creationDate>
+    <author>Michael Buchholz</author>
+    <authorEmail>mail@lean-stack.rocks</authorEmail>
+    <copyright>Weltspiegel Cottbus</copyright>
+    <license>MIT; see LICENSE</license>
+    <description>MOD_CINETIXX_EVENTS_XML_DESCRIPTION</description>
+
+    <namespace path="src">Weltspiegel\Module\CinetixxEvents</namespace>
+
+    <files>
+        <folder module="mod_cinetixx_events">services</folder>
+        <folder>src</folder>
+        <folder>tmpl</folder>
+        <folder>language</folder>
+    </files>
+</extension>
