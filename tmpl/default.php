@@ -117,8 +117,14 @@ if (!empty($eventsOV)) $categoryCount++;
                                     $nextShows = array_slice($showsByDay[$nextDay], 0, 2);
 
                                     $dayDate = new DateTime($nextDay);
+
+                                    // Format date in German
+                                    $formatter = new IntlDateFormatter('de_DE', IntlDateFormatter::NONE, IntlDateFormatter::NONE);
+                                    $formatter->setPattern('EEE, dd.MM.');
+                                    $formattedDate = $formatter->format($dayDate);
+
                                     echo '<div class="small text-muted">';
-                                    echo '<strong>' . $dayDate->format('D, d.m.') . '</strong><br>';
+                                    echo '<strong>' . $formattedDate . '</strong><br>';
 
                                     foreach ($nextShows as $show) {
                                         $showDateTime = new DateTime($show->showStart);
@@ -188,8 +194,14 @@ if (!empty($eventsOV)) $categoryCount++;
                                     $nextShows = array_slice($showsByDay[$nextDay], 0, 2);
 
                                     $dayDate = new DateTime($nextDay);
+
+                                    // Format date in German
+                                    $formatter = new IntlDateFormatter('de_DE', IntlDateFormatter::NONE, IntlDateFormatter::NONE);
+                                    $formatter->setPattern('EEE, dd.MM.');
+                                    $formattedDate = $formatter->format($dayDate);
+
                                     echo '<div class="small text-muted">';
-                                    echo '<strong>' . $dayDate->format('D, d.m.') . '</strong><br>';
+                                    echo '<strong>' . $formattedDate . '</strong><br>';
 
                                     foreach ($nextShows as $show) {
                                         $showDateTime = new DateTime($show->showStart);
@@ -259,8 +271,14 @@ if (!empty($eventsOV)) $categoryCount++;
                                     $nextShows = array_slice($showsByDay[$nextDay], 0, 2);
 
                                     $dayDate = new DateTime($nextDay);
+
+                                    // Format date in German
+                                    $formatter = new IntlDateFormatter('de_DE', IntlDateFormatter::NONE, IntlDateFormatter::NONE);
+                                    $formatter->setPattern('EEE, dd.MM.');
+                                    $formattedDate = $formatter->format($dayDate);
+
                                     echo '<div class="small text-muted">';
-                                    echo '<strong>' . $dayDate->format('D, d.m.') . '</strong><br>';
+                                    echo '<strong>' . $formattedDate . '</strong><br>';
 
                                     foreach ($nextShows as $show) {
                                         $showDateTime = new DateTime($show->showStart);
@@ -330,8 +348,14 @@ if (!empty($eventsOV)) $categoryCount++;
                                     $nextShows = array_slice($showsByDay[$nextDay], 0, 2);
 
                                     $dayDate = new DateTime($nextDay);
+
+                                    // Format date in German
+                                    $formatter = new IntlDateFormatter('de_DE', IntlDateFormatter::NONE, IntlDateFormatter::NONE);
+                                    $formatter->setPattern('EEE, dd.MM.');
+                                    $formattedDate = $formatter->format($dayDate);
+
                                     echo '<div class="small text-muted">';
-                                    echo '<strong>' . $dayDate->format('D, d.m.') . '</strong><br>';
+                                    echo '<strong>' . $formattedDate . '</strong><br>';
 
                                     foreach ($nextShows as $show) {
                                         $showDateTime = new DateTime($show->showStart);
