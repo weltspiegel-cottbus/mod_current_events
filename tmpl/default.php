@@ -46,8 +46,27 @@ foreach ($events as $id => $event) {
 
 ?>
 <div class="mod-cinetixx-events">
+    <?php if (!empty($events3D) || !empty($events2D) || !empty($eventsOmU) || !empty($eventsOV)) : ?>
+        <nav class="mb-3">
+            <div class="d-flex gap-3 flex-wrap">
+                <?php if (!empty($events3D)) : ?>
+                    <a href="#events-3d" class="btn btn-sm btn-outline-primary">3D</a>
+                <?php endif; ?>
+                <?php if (!empty($events2D)) : ?>
+                    <a href="#events-2d" class="btn btn-sm btn-outline-primary">2D</a>
+                <?php endif; ?>
+                <?php if (!empty($eventsOmU)) : ?>
+                    <a href="#events-omu" class="btn btn-sm btn-outline-primary">OmU</a>
+                <?php endif; ?>
+                <?php if (!empty($eventsOV)) : ?>
+                    <a href="#events-ov" class="btn btn-sm btn-outline-primary">OV</a>
+                <?php endif; ?>
+            </div>
+        </nav>
+    <?php endif; ?>
+
     <?php if (!empty($events3D)) : ?>
-        <h3>Aktuell in 3D</h3>
+        <h3 id="events-3d">Aktuell in 3D</h3>
         <div class="row g-3 mb-4">
             <?php foreach ($events3D as $id => $event) : ?>
                 <?php
@@ -68,7 +87,7 @@ foreach ($events as $id => $event) {
     <?php endif; ?>
 
     <?php if (!empty($events2D)) : ?>
-        <h3>Aktuell in 2D</h3>
+        <h3 id="events-2d">Aktuell in 2D</h3>
         <div class="row g-3 mb-4">
             <?php foreach ($events2D as $id => $event) : ?>
                 <?php
@@ -89,7 +108,7 @@ foreach ($events as $id => $event) {
     <?php endif; ?>
 
     <?php if (!empty($eventsOmU)) : ?>
-        <h3>Aktuell in OmU</h3>
+        <h3 id="events-omu">Aktuell in OmU</h3>
         <div class="row g-3 mb-4">
             <?php foreach ($eventsOmU as $id => $event) : ?>
                 <?php
@@ -110,7 +129,7 @@ foreach ($events as $id => $event) {
     <?php endif; ?>
 
     <?php if (!empty($eventsOV)) : ?>
-        <h3>Aktuell in OV</h3>
+        <h3 id="events-ov">Aktuell in OV</h3>
         <div class="row g-3">
             <?php foreach ($eventsOV as $id => $event) : ?>
                 <?php
