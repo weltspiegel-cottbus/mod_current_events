@@ -40,7 +40,7 @@ Download the latest release ZIP from the GitHub releases page and install via Jo
 ### Build Package
 
 ```bash
-npm run build
+pnpm build
 ```
 
 This creates a `mod_cinetixx_events-{version}.zip` file ready for Joomla installation.
@@ -48,6 +48,8 @@ This creates a `mod_cinetixx_events-{version}.zip` file ready for Joomla install
 ### Creating Releases
 
 This project uses [changelogen](https://github.com/unjs/changelogen) for automated changelog generation and releases based on conventional commits.
+
+**Prerequisites:** This project uses pnpm for package management. Install it with `npm install -g pnpm` if you don't have it.
 
 #### Commit Message Format
 
@@ -82,23 +84,23 @@ git commit -m "docs: update installation instructions"
 
 Install dependencies first:
 ```bash
-npm install
+pnpm install
 ```
 
 Then create a release:
 
 ```bash
 # Patch release (0.1.0 -> 0.1.1) - for bug fixes
-npm run release:patch
+pnpm release:patch
 
 # Minor release (0.1.0 -> 0.2.0) - for new features
-npm run release:minor
+pnpm release:minor
 
 # Major release (0.1.0 -> 1.0.0) - for breaking changes
-npm run release:major
+pnpm release:major
 
 # Auto-detect version bump from commits
-npm run release
+pnpm release
 ```
 
 This will:
@@ -113,7 +115,7 @@ This will:
 To generate changelog without releasing:
 
 ```bash
-npm run changelog
+pnpm changelog
 ```
 
 ### What Gets Packaged
@@ -143,7 +145,7 @@ The module includes a GitHub Actions workflow (`.github/workflows/release.yml`) 
 Use changelogen to create releases (as described above):
 
 ```bash
-npm run release:minor
+pnpm release:minor
 ```
 
 This automatically creates the tag and pushes to GitHub, triggering the workflow.
