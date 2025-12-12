@@ -9,12 +9,10 @@
 
 \defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 
 /**
- * @var Joomla\CMS\WebAsset\WebAssetManager $wa
  * @var Joomla\Registry\Registry $params
  * @var array $events
  */
@@ -23,10 +21,6 @@ use Joomla\CMS\Router\Route;
 if (empty($events) || !is_array($events)) {
     return;
 }
-
-// Load booking JavaScript for modal handling
-$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-$wa->useScript('com_cinetixx.booking');
 
 /**
  * Helper function to render show times for an event

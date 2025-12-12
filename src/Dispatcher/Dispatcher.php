@@ -12,7 +12,6 @@ namespace Weltspiegel\Module\CinetixxEvents\Site\Dispatcher;
 \defined('_JEXEC') or die;
 
 use Joomla\CMS\Dispatcher\AbstractModuleDispatcher;
-use Joomla\CMS\Factory;
 use Weltspiegel\Module\CinetixxEvents\Site\Helper\CinetixxEventsHelper;
 
 /**
@@ -35,15 +34,6 @@ class Dispatcher extends AbstractModuleDispatcher
 
         // Get events from the component using our helper
         $data['events'] = CinetixxEventsHelper::getEvents();
-
-        // Register the booking script asset from com_cinetixx
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerScript(
-            'com_cinetixx.booking',
-            'media/com_cinetixx/js/booking.js',
-            ['version' => 'auto'],
-            ['defer' => true]
-        );
 
         return $data;
     }
