@@ -1,6 +1,15 @@
 # Changelog
 
 
+## v0.4.0
+
+[compare changes](https://github.com/weltspiegel-cottbus/mod_current_events/compare/v0.3.0...v0.4.0)
+
+### 💅 Refactors
+
+- Remove the modal booking link addition. Just a new tab for now. ([225966a](https://github.com/weltspiegel-cottbus/mod_current_events/commit/225966a))
+- Remove change module name to mod_current_events. ([23c420b](https://github.com/weltspiegel-cottbus/mod_current_events/commit/23c420b))
+
 ## v0.3.0
 
 [compare changes](https://github.com/weltspiegel-cottbus/mod_cinetixx_events/compare/v0.2.4...v0.3.0)

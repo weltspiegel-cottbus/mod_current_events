@@ -1,16 +1,16 @@
-# Cinetixx Events Module
+# Current Events Module
 
-Joomla 5/6 module to display current movies and events from the Cinetixx component.
+Joomla 5/6 module to display current movies and events from the Weltspiegel component.
 
 ## Description
 
-This module integrates with the `com_cinetixx` component and displays current movies on your Joomla site. It reuses the component's model to fetch events from the Cinetixx API.
+This module integrates with the `com_weltspiegel` component and displays current movies on your Joomla site. It reuses the component's model to fetch events from the Cinetixx API.
 
 ## Requirements
 
 - Joomla 5.0 or higher (tested with Joomla 6)
 - PHP 8.1 or higher
-- `com_cinetixx` component installed and configured
+- `com_weltspiegel` component installed and configured
 
 ## Installation
 
@@ -23,11 +23,11 @@ This module integrates with the `com_cinetixx` component and displays current mo
 
 2. Upload the generated ZIP file via Joomla Administrator:
    - System → Extensions → Install
-   - Upload `mod_cinetixx_events-*.zip`
+   - Upload `mod_current_events-*.zip`
 
 3. Publish the module:
    - Content → Site Modules → New
-   - Select "Cinetixx Events"
+   - Select "Current Events"
    - Assign to desired position
    - Publish it
 
@@ -43,7 +43,7 @@ Once installed, the module can be updated automatically through Joomla's update 
 - New versions are automatically detected and can be installed with one click
 
 The update manifest is hosted at:
-`https://raw.githubusercontent.com/weltspiegel-cottbus/mod_cinetixx_events/main/update-manifest.xml`
+`https://raw.githubusercontent.com/weltspiegel-cottbus/mod_current_events/main/update-manifest.xml`
 
 ## Development
 
@@ -53,7 +53,7 @@ The update manifest is hosted at:
 pnpm build
 ```
 
-This creates a `mod_cinetixx_events-{version}.zip` file ready for Joomla installation.
+This creates a `mod_current_events-{version}.zip` file ready for Joomla installation.
 
 ### Creating Releases
 
@@ -99,7 +99,7 @@ pnpm install
 
 **Before releasing**, update version numbers in two files:
 
-1. **`mod_cinetixx_events.xml`**:
+1. **`mod_current_events.xml`**:
    - Update the `<version>` tag to match the new version
 
 2. **`update-manifest.xml`**:
@@ -144,7 +144,7 @@ pnpm changelog
 ### What Gets Packaged
 
 The build script includes only the necessary files:
-- `mod_cinetixx_events.xml` - Module manifest
+- `mod_current_events.xml` - Module manifest
 - `services/` - Dependency injection provider
 - `src/` - Module classes (Dispatcher, Helper)
 - `tmpl/` - Layout files

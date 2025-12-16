@@ -1,7 +1,7 @@
 {
   "name": "mod_current_events",
   "license": "MIT",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Joomla Module zur Anzeige aktueller Veranstaltungen",
   "repository": {
     "type": "git",

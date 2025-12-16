@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension type="module" client="site" method="upgrade">
     <name>MOD_CURRENT_EVENTS</name>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
     <creationDate>Dezember 2025</creationDate>
     <author>Michael Buchholz</author>
     <authorEmail>mail@lean-stack.rocks</authorEmail>
