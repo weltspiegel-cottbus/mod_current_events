@@ -22,23 +22,16 @@ if (empty($events) || !is_array($events)) {
     return;
 }
 
-/**
- * Helper function to render show times for an event
- *
- * @throws Exception
- * @since 1.0.0
- */
-function renderShowTimes($event, $detailRoute): void
-{
+// Pre-calculate upcoming shows and filter out events without any
+$now = time();
+$eventsWithShows = [];
+
+foreach ($events as $id => $event) {
     if (empty($event->shows)) {
-        echo '<div class="small text-muted" style="min-height: 3rem;">&nbsp;</div>';
-        return;
+        continue;
     }
 
     $showsByDay = [];
-    $now = time();
-
-    // Group shows by day
     foreach ($event->shows as $show) {
         $showTime = strtotime($show->showStart);
         if ($showTime >= $now) {
@@ -50,90 +43,19 @@ function renderShowTimes($event, $detailRoute): void
         }
     }
 
-    // Sort days
-    ksort($showsByDay);
-
-    // Get first day with all shows
-    if (empty($showsByDay)) {
-        echo '<div class="small text-muted" style="min-height: 3rem;">&nbsp;</div>';
-        return;
+    // Only include events that have upcoming shows
+    if (!empty($showsByDay)) {
+        ksort($showsByDay);
+        $eventsWithShows[$id] = [
+            'event' => $event,
+            'showsByDay' => $showsByDay
+        ];
     }
-
-    $nextDay = array_key_first($showsByDay);
-    $nextShows = $showsByDay[$nextDay];
-    $hasMoreDays = count($showsByDay) > 1;
-
-    $dayDate = new DateTime($nextDay);
-    $today = new DateTime();
-    $tomorrow = (new DateTime())->modify('+1 day');
-
-    // Format date in German
-    $formatter = new IntlDateFormatter('de_DE', IntlDateFormatter::NONE, IntlDateFormatter::NONE);
-    $formatter->setPattern('EEE, dd.MM.');
-    $formattedDate = $formatter->format($dayDate);
-
-    // Check if it's today or tomorrow
-    $dayLabel = $formattedDate;
-    if ($dayDate->format('Y-m-d') === $today->format('Y-m-d')) {
-        $dayLabel = 'Heute (' . $formattedDate . ')';
-    } elseif ($dayDate->format('Y-m-d') === $tomorrow->format('Y-m-d')) {
-        $dayLabel = 'Morgen (' . $formattedDate . ')';
-    }
-
-    echo '<div class="small text-muted" style="min-height: 3rem;">';
-    echo '<div>';
-    echo '<strong>' . $dayLabel . '</strong><br>';
-
-    foreach ($nextShows as $show) {
-        $showDateTime = new DateTime($show->showStart);
-
-        echo LayoutHelper::render('booking.link', [
-            'showId' => $show->showId,
-            'label' => $showDateTime->format('H:i'),
-            'options' => ['class' => 'text-decoration-none']
-        ], JPATH_SITE . '/components/com_weltspiegel/layouts');
-
-        if ($show !== end($nextShows)) {
-            echo ' | ';
-        }
-    }
-    echo '</div>';
-
-    if ($hasMoreDays) {
-        echo '<div class="mt-1">';
-        echo '<a href="' . $detailRoute . '" class="text-decoration-none">Weitere Tage</a>';
-        echo '</div>';
-    }
-
-    echo '</div>';
 }
 
-/**
- * Helper function to render an event card
- *
- * @throws Exception
- * @since 1.0.0
- */
-function renderEventCard($id, $event): void
-{
-    $detailRoute = Route::_('index.php?option=com_weltspiegel&view=cinetixxitem&event_id=' . $id);
-    ?>
-    <div class="col-6 col-md-4 col-lg-3">
-        <div class="card h-100">
-            <a href="<?= $detailRoute ?>" class="d-block" style="aspect-ratio: 2/3; overflow: hidden;">
-                <?php if (!empty($event->poster)) : ?>
-                    <img src="<?= $event->poster ?>"
-                         alt="<?= htmlspecialchars($event->title) ?>"
-                         class="card-img-top"
-                         style="width: 100%; height: 100%; object-fit: cover;">
-                <?php endif; ?>
-            </a>
-            <div class="card-body p-2">
-                <?php renderShowTimes($event, $detailRoute); ?>
-            </div>
-        </div>
-    </div>
-    <?php
+// Don't display anything if no events have upcoming shows
+if (empty($eventsWithShows)) {
+    return;
 }
 
 // Separate events into categories
@@ -144,19 +66,21 @@ $categorizedEvents = [
     'OV' => []
 ];
 
-foreach ($events as $id => $event) {
+foreach ($eventsWithShows as $id => $data) {
+    $event = $data['event'];
+
     // Check language property for OmU or OV
     $isOmU = !empty($event->language) && stripos($event->language, 'OmU') !== false;
     $isOV = !empty($event->language) && stripos($event->language, 'OV') !== false;
 
     if ($isOmU) {
-        $categorizedEvents['OmU'][$id] = $event;
+        $categorizedEvents['OmU'][$id] = $data;
     } elseif ($isOV) {
-        $categorizedEvents['OV'][$id] = $event;
+        $categorizedEvents['OV'][$id] = $data;
     } elseif (!empty($event->is3D)) {
-        $categorizedEvents['3D'][$id] = $event;
+        $categorizedEvents['3D'][$id] = $data;
     } else {
-        $categorizedEvents['2D'][$id] = $event;
+        $categorizedEvents['2D'][$id] = $data;
     }
 }
 
@@ -189,8 +113,67 @@ $categoryCount = count(array_filter($categorizedEvents, fn($cat) => !empty($cat)
         <?php if (!empty($categorizedEvents[$key])) : ?>
             <h3 id="<?= $config['id'] ?>"><?= $config['title'] ?></h3>
             <div class="row g-3 mb-4">
-                <?php foreach ($categorizedEvents[$key] as $id => $event) : ?>
-                    <?php renderEventCard($id, $event); ?>
+                <?php foreach ($categorizedEvents[$key] as $id => $data) :
+                    $event = $data['event'];
+                    $showsByDay = $data['showsByDay'];
+                    $detailRoute = Route::_('index.php?option=com_weltspiegel&view=cinetixxitem&event_id=' . $id);
+
+                    $nextDay = array_key_first($showsByDay);
+                    $nextShows = $showsByDay[$nextDay];
+                    $hasMoreDays = count($showsByDay) > 1;
+
+                    $dayDate = new DateTime($nextDay);
+                    $today = new DateTime();
+                    $tomorrow = (new DateTime())->modify('+1 day');
+
+                    // Format date in German
+                    $formatter = new IntlDateFormatter('de_DE', IntlDateFormatter::NONE, IntlDateFormatter::NONE);
+                    $formatter->setPattern('EEE, dd.MM.');
+                    $formattedDate = $formatter->format($dayDate);
+
+                    // Check if it's today or tomorrow
+                    $dayLabel = $formattedDate;
+                    if ($dayDate->format('Y-m-d') === $today->format('Y-m-d')) {
+                        $dayLabel = 'Heute (' . $formattedDate . ')';
+                    } elseif ($dayDate->format('Y-m-d') === $tomorrow->format('Y-m-d')) {
+                        $dayLabel = 'Morgen (' . $formattedDate . ')';
+                    }
+                ?>
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <div class="card h-100">
+                            <a href="<?= $detailRoute ?>" class="d-block" style="aspect-ratio: 2/3; overflow: hidden;">
+                                <?php if (!empty($event->poster)) : ?>
+                                    <img src="<?= $event->poster ?>"
+                                         alt="<?= htmlspecialchars($event->title) ?>"
+                                         class="card-img-top"
+                                         style="width: 100%; height: 100%; object-fit: cover;">
+                                <?php endif; ?>
+                            </a>
+                            <div class="card-body p-2">
+                                <div class="small text-muted" style="min-height: 3rem;">
+                                    <div>
+                                        <strong><?= $dayLabel ?></strong><br>
+                                        <?php foreach ($nextShows as $i => $show) :
+                                            $showDateTime = new DateTime($show->showStart);
+                                            echo LayoutHelper::render('booking.link', [
+                                                'showId' => $show->showId,
+                                                'label' => $showDateTime->format('H:i'),
+                                                'options' => ['class' => 'text-decoration-none']
+                                            ], JPATH_SITE . '/components/com_weltspiegel/layouts');
+                                            if ($i < count($nextShows) - 1) {
+                                                echo ' | ';
+                                            }
+                                        endforeach; ?>
+                                    </div>
+                                    <?php if ($hasMoreDays) : ?>
+                                        <div class="mt-1">
+                                            <a href="<?= $detailRoute ?>" class="text-decoration-none">Weitere Tage</a>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
