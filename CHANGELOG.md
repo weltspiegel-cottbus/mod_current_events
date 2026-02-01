@@ -1,6 +1,14 @@
 # Changelog
 
 
+## v0.4.5
+
+[compare changes](https://github.com/weltspiegel-cottbus/mod_current_events/compare/v0.4.4...v0.4.5)
+
+### 🩹 Fixes
+
+- Do not show outdated events. ([3144efe](https://github.com/weltspiegel-cottbus/mod_current_events/commit/3144efe))
+
 ## v0.4.4
 
 [compare changes](https://github.com/weltspiegel-cottbus/mod_current_events/compare/v0.4.3...v0.4.4)
