@@ -1,6 +1,6 @@
 {
   "name": "mod_current_events",
-  "version": "0.4.5",
+  "version": "1.0.0",
   "description": "Joomla Module zur Anzeige aktueller Veranstaltungen",
   "type": "module",
   "license": "MIT",

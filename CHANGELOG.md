@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v1.0.0
+
+[compare changes](https://github.com/weltspiegel-cottbus/mod_current_events/compare/v0.4.5...v1.0.0)
+
+### 🚀 Enhancements
+
+- ⚠️  Rewrite mod_current_events for movie-centric data model (v1.0.0) ([99da241](https://github.com/weltspiegel-cottbus/mod_current_events/commit/99da241))
+
+### 🩹 Fixes
+
+- Update targetplatform. ([4a73453](https://github.com/weltspiegel-cottbus/mod_current_events/commit/4a73453))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Rewrite mod_current_events for movie-centric data model (v1.0.0) ([99da241](https://github.com/weltspiegel-cottbus/mod_current_events/commit/99da241))
+
 ## v0.4.5
 
 [compare changes](https://github.com/weltspiegel-cottbus/mod_current_events/compare/v0.4.4...v0.4.5)
