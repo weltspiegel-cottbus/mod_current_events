@@ -9,99 +9,89 @@
 
 \defined('_JEXEC') or die;
 
-use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 
 /**
  * @var Joomla\Registry\Registry $params
- * @var array $events
+ * @var array $movies
  */
 
-// Don't display anything if there are no events
-if (empty($events) || !is_array($events)) {
+if (empty($movies) || !is_array($movies)) {
     return;
 }
 
-// Pre-calculate upcoming shows and filter out events without any
 $now = time();
-$eventsWithShows = [];
 
-foreach ($events as $id => $event) {
-    if (empty($event->shows)) {
-        continue;
-    }
+// Determine the section (3D/2D/OmU/OV) for a format variant
+$getCategory = static function ($format): string {
+    $lang = strtolower($format->language ?? '');
+    if (str_contains($lang, 'omu') || str_contains($lang, 'omü')) return 'OmU';
+    if (str_contains($lang, 'ov'))  return 'OV';
+    if ($format->is3D)              return '3D';
+    return '2D';
+};
 
-    $showsByDay = [];
-    foreach ($event->shows as $show) {
-        $showTime = strtotime($show->showStart);
-        if ($showTime >= $now) {
-            $day = date('Y-m-d', $showTime);
-            if (!isset($showsByDay[$day])) {
-                $showsByDay[$day] = [];
+// Build categorized structure:
+// $sections[category][movieId] = ['movie' => ..., 'showsByDay' => [...]]
+$sections = ['3D' => [], '2D' => [], 'OmU' => [], 'OV' => []];
+
+foreach ($movies as $movie) {
+    foreach ($movie->formats as $format) {
+        $category = $getCategory($format);
+
+        foreach ($format->shows as $show) {
+            $showTime = strtotime($show->showStart);
+            if ($showTime < $now) {
+                continue;
             }
-            $showsByDay[$day][] = $show;
+            $day = date('Y-m-d', $showTime);
+
+            if (!isset($sections[$category][$movie->movieId])) {
+                $sections[$category][$movie->movieId] = [
+                    'movie'      => $movie,
+                    'showsByDay' => [],
+                ];
+            }
+
+            $sections[$category][$movie->movieId]['showsByDay'][$day][] = $show;
         }
     }
-
-    // Only include events that have upcoming shows
-    if (!empty($showsByDay)) {
-        ksort($showsByDay);
-        $eventsWithShows[$id] = [
-            'event' => $event,
-            'showsByDay' => $showsByDay
-        ];
-    }
 }
 
-// Don't display anything if no events have upcoming shows
-if (empty($eventsWithShows)) {
+// Sort shows within each section
+foreach ($sections as $category => &$sectionMovies) {
+    foreach ($sectionMovies as &$data) {
+        ksort($data['showsByDay']);
+    }
+}
+unset($sectionMovies, $data);
+
+// Remove empty sections
+$sections = array_filter($sections, fn($s) => !empty($s));
+
+if (empty($sections)) {
     return;
 }
 
-// Separate events into categories
-$categorizedEvents = [
-    '3D' => [],
-    '2D' => [],
-    'OmU' => [],
-    'OV' => []
-];
-
-foreach ($eventsWithShows as $id => $data) {
-    $event = $data['event'];
-
-    // Check language property for OmU or OV
-    $isOmU = !empty($event->language) && stripos($event->language, 'OmU') !== false;
-    $isOV = !empty($event->language) && stripos($event->language, 'OV') !== false;
-
-    if ($isOmU) {
-        $categorizedEvents['OmU'][$id] = $data;
-    } elseif ($isOV) {
-        $categorizedEvents['OV'][$id] = $data;
-    } elseif (!empty($event->is3D)) {
-        $categorizedEvents['3D'][$id] = $data;
-    } else {
-        $categorizedEvents['2D'][$id] = $data;
-    }
-}
-
-// Define category configuration
-$categoryConfig = [
-    '3D' => ['title' => 'Aktuell in 3D', 'id' => 'events-3d', 'label' => '3D'],
-    '2D' => ['title' => 'Aktuell in 2D', 'id' => 'events-2d', 'label' => '2D'],
+$sectionConfig = [
+    '3D'  => ['title' => 'Aktuell in 3D',  'id' => 'events-3d',  'label' => '3D'],
+    '2D'  => ['title' => 'Aktuell in 2D',  'id' => 'events-2d',  'label' => '2D'],
     'OmU' => ['title' => 'Aktuell in OmU', 'id' => 'events-omu', 'label' => 'OmU'],
-    'OV' => ['title' => 'Aktuell in OV', 'id' => 'events-ov', 'label' => 'OV']
+    'OV'  => ['title' => 'Aktuell in OV',  'id' => 'events-ov',  'label' => 'OV'],
 ];
 
-// Count categories with events
-$categoryCount = count(array_filter($categorizedEvents, fn($cat) => !empty($cat)));
+$today    = (new DateTime())->format('Y-m-d');
+$tomorrow = (new DateTime('+1 day'))->format('Y-m-d');
+$formatter = new IntlDateFormatter('de_DE', IntlDateFormatter::NONE, IntlDateFormatter::NONE);
+$formatter->setPattern('EEE, dd.MM.');
 
 ?>
 <div class="mod-cinetixx-events">
-    <?php if ($categoryCount > 1) : ?>
+    <?php if (count($sections) > 1) : ?>
         <nav class="mb-3">
             <div class="d-flex gap-3 flex-wrap">
-                <?php foreach ($categoryConfig as $key => $config) : ?>
-                    <?php if (!empty($categorizedEvents[$key])) : ?>
+                <?php foreach ($sectionConfig as $key => $config) : ?>
+                    <?php if (isset($sections[$key])) : ?>
                         <a href="#<?= $config['id'] ?>" class="btn btn-sm btn-outline-primary"><?= $config['label'] ?></a>
                     <?php endif; ?>
                 <?php endforeach; ?>
@@ -109,73 +99,65 @@ $categoryCount = count(array_filter($categorizedEvents, fn($cat) => !empty($cat)
         </nav>
     <?php endif; ?>
 
-    <?php foreach ($categoryConfig as $key => $config) : ?>
-        <?php if (!empty($categorizedEvents[$key])) : ?>
-            <h3 id="<?= $config['id'] ?>"><?= $config['title'] ?></h3>
-            <div class="row g-3 mb-4">
-                <?php foreach ($categorizedEvents[$key] as $id => $data) :
-                    $event = $data['event'];
-                    $showsByDay = $data['showsByDay'];
-                    $detailRoute = Route::_('index.php?option=com_weltspiegel&view=cinetixxitem&event_id=' . $id);
+    <?php foreach ($sectionConfig as $key => $config) : ?>
+        <?php if (empty($sections[$key])) : continue; endif; ?>
 
-                    $nextDay = array_key_first($showsByDay);
-                    $nextShows = $showsByDay[$nextDay];
-                    $hasMoreDays = count($showsByDay) > 1;
+        <h3 id="<?= $config['id'] ?>"><?= $config['title'] ?></h3>
+        <div class="row g-3 mb-4">
+            <?php foreach ($sections[$key] as $movieId => $data) :
+                $movie      = $data['movie'];
+                $showsByDay = $data['showsByDay'];
+                $detailRoute = Route::_('index.php?option=com_weltspiegel&view=movie&movie_id=' . $movie->movieId);
 
-                    $dayDate = new DateTime($nextDay);
-                    $today = new DateTime();
-                    $tomorrow = (new DateTime())->modify('+1 day');
+                $nextDay   = array_key_first($showsByDay);
+                $nextShows = $showsByDay[$nextDay];
+                $hasMoreDays = count($showsByDay) > 1;
 
-                    // Format date in German
-                    $formatter = new IntlDateFormatter('de_DE', IntlDateFormatter::NONE, IntlDateFormatter::NONE);
-                    $formatter->setPattern('EEE, dd.MM.');
-                    $formattedDate = $formatter->format($dayDate);
+                $dayDate = new DateTime($nextDay);
+                $formattedDate = $formatter->format($dayDate);
 
-                    // Check if it's today or tomorrow
+                if ($nextDay === $today) {
+                    $dayLabel = 'Heute (' . $formattedDate . ')';
+                } elseif ($nextDay === $tomorrow) {
+                    $dayLabel = 'Morgen (' . $formattedDate . ')';
+                } else {
                     $dayLabel = $formattedDate;
-                    if ($dayDate->format('Y-m-d') === $today->format('Y-m-d')) {
-                        $dayLabel = 'Heute (' . $formattedDate . ')';
-                    } elseif ($dayDate->format('Y-m-d') === $tomorrow->format('Y-m-d')) {
-                        $dayLabel = 'Morgen (' . $formattedDate . ')';
-                    }
-                ?>
-                    <div class="col-6 col-md-4 col-lg-3">
-                        <div class="card h-100">
-                            <a href="<?= $detailRoute ?>" class="d-block" style="aspect-ratio: 2/3; overflow: hidden;">
-                                <?php if (!empty($event->poster)) : ?>
-                                    <img src="<?= $event->poster ?>"
-                                         alt="<?= htmlspecialchars($event->title) ?>"
-                                         class="card-img-top"
-                                         style="width: 100%; height: 100%; object-fit: cover;">
-                                <?php endif; ?>
-                            </a>
-                            <div class="card-body p-2">
-                                <div class="small text-muted" style="min-height: 3rem;">
-                                    <div>
-                                        <strong><?= $dayLabel ?></strong><br>
-                                        <?php foreach ($nextShows as $i => $show) :
-                                            $showDateTime = new DateTime($show->showStart);
-                                            echo LayoutHelper::render('booking.link', [
-                                                'showId' => $show->showId,
-                                                'label' => $showDateTime->format('H:i'),
-                                                'options' => ['class' => 'text-decoration-none']
-                                            ], JPATH_SITE . '/components/com_weltspiegel/layouts');
-                                            if ($i < count($nextShows) - 1) {
-                                                echo ' | ';
-                                            }
-                                        endforeach; ?>
-                                    </div>
-                                    <?php if ($hasMoreDays) : ?>
-                                        <div class="mt-1">
-                                            <a href="<?= $detailRoute ?>" class="text-decoration-none">Weitere Tage</a>
-                                        </div>
-                                    <?php endif; ?>
+                }
+            ?>
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="card h-100">
+                        <a href="<?= $detailRoute ?>" class="d-block" style="aspect-ratio: 2/3; overflow: hidden;">
+                            <?php if (!empty($movie->poster)) : ?>
+                                <img src="<?= $movie->poster ?>"
+                                     alt="<?= htmlspecialchars($movie->title) ?>"
+                                     class="card-img-top"
+                                     style="width: 100%; height: 100%; object-fit: cover;">
+                            <?php endif; ?>
+                        </a>
+                        <div class="card-body p-2">
+                            <div class="small text-muted" style="min-height: 3rem;">
+                                <div>
+                                    <strong><?= $dayLabel ?></strong><br>
+                                    <?php foreach ($nextShows as $i => $show) :
+                                        $showDateTime = new DateTime($show->showStart);
+                                        echo '<a href="' . htmlspecialchars($show->bookingLink) . '" class="text-decoration-none">'
+                                            . $showDateTime->format('H:i')
+                                            . '</a>';
+                                        if ($i < count($nextShows) - 1) {
+                                            echo ' | ';
+                                        }
+                                    endforeach; ?>
                                 </div>
+                                <?php if ($hasMoreDays) : ?>
+                                    <div class="mt-1">
+                                        <a href="<?= $detailRoute ?>" class="text-decoration-none">Weitere Tage</a>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
     <?php endforeach; ?>
 </div>

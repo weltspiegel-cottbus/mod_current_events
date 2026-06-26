@@ -22,29 +22,26 @@ use Joomla\CMS\Factory;
 class CurrentEventsHelper
 {
 	/**
-	 * Retrieve list of events from the component
+	 * Retrieve list of movies from the component
 	 *
-	 * @return  array|false  Array of events or false on failure
+	 * @return  array|false  Array of movies or false on failure
 	 *
 	 * @throws Exception
-	 * @since   0.1.0
+	 * @since   1.0.0
 	 */
-    public static function getEvents(): array|false
+    public static function getMovies(): array|false
     {
         $app = Factory::getApplication();
 
-        // Boot the component and get its MVC factory
-        $component = $app->bootComponent('com_weltspiegel');
+        $component  = $app->bootComponent('com_weltspiegel');
         $mvcFactory = $component->getMVCFactory();
 
-        // Create the Cinetixx model
-        $model = $mvcFactory->createModel('Cinetixx', 'Site');
+        $model = $mvcFactory->createModel('Movies', 'Site');
 
         if (!$model) {
             return false;
         }
 
-        // Get all events from the model
         return $model->getItems();
     }
 }
