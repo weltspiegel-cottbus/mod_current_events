@@ -10,6 +10,7 @@
 \defined('_JEXEC') or die;
 
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Layout\LayoutHelper;
 
 /**
  * @var Joomla\Registry\Registry $params
@@ -86,7 +87,7 @@ $formatter = new IntlDateFormatter('de_DE', IntlDateFormatter::NONE, IntlDateFor
 $formatter->setPattern('EEE, dd.MM.');
 
 ?>
-<div class="mod-cinetixx-events">
+<div class="mod-current-events">
     <?php if (count($sections) > 1) : ?>
         <nav class="mb-3">
             <div class="d-flex gap-3 flex-wrap">
@@ -140,9 +141,11 @@ $formatter->setPattern('EEE, dd.MM.');
                                     <strong><?= $dayLabel ?></strong><br>
                                     <?php foreach ($nextShows as $i => $show) :
                                         $showDateTime = new DateTime($show->showStart);
-                                        echo '<a href="' . htmlspecialchars($show->bookingLink) . '" class="text-decoration-none">'
-                                            . $showDateTime->format('H:i')
-                                            . '</a>';
+                                        echo LayoutHelper::render('booking.link', [
+                                            'showId'  => $show->showId,
+                                            'label'   => $showDateTime->format('H:i'),
+                                            'options' => ['class' => 'text-decoration-none'],
+                                        ]);
                                         if ($i < count($nextShows) - 1) {
                                             echo ' | ';
                                         }
