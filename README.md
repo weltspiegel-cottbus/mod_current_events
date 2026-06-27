@@ -17,20 +17,21 @@ This module integrates with the `com_weltspiegel` component and displays current
 ### Manual Installation
 
 1. Build the package:
-   ```bash
-   npm install
-   npm run release
-   ```
+
+    ```bash
+    npm install
+    npm run release
+    ```
 
 2. Upload the generated ZIP file via Joomla Administrator:
-   - System → Extensions → Install
-   - Upload `mod_current_events-*.zip`
+    - System → Extensions → Install
+    - Upload `mod_current_events-*.zip`
 
 3. Publish the module:
-   - Content → Site Modules → New
-   - Select "Current Events"
-   - Assign to desired position
-   - Publish it
+    - Content → Site Modules → New
+    - Select "Current Events"
+    - Assign to desired position
+    - Publish it
 
 ### Via GitHub Releases
 
@@ -39,6 +40,7 @@ Download the latest release ZIP from the GitHub releases page and install via Jo
 ### Automatic Updates
 
 Once installed, the module can be updated automatically through Joomla's update system:
+
 - System → Update → Extensions
 - Joomla checks the update server configured in the module manifest
 - New versions are automatically detected and can be installed with one click
@@ -80,6 +82,7 @@ Follow conventional commits format:
 ```
 
 **Types:**
+
 - `feat:` New feature (bumps minor version)
 - `fix:` Bug fix (bumps patch version)
 - `perf:` Performance improvement (bumps patch version)
@@ -92,6 +95,7 @@ Follow conventional commits format:
 - `test:` Test changes
 
 **Examples:**
+
 ```bash
 git commit -m "feat: add filter by date option"
 git commit -m "fix: correct event title escaping"
@@ -101,6 +105,7 @@ git commit -m "docs: update installation instructions"
 #### Release Commands
 
 Install dependencies first:
+
 ```bash
 npm install
 ```
@@ -108,11 +113,11 @@ npm install
 **Before releasing**, update version numbers in two files:
 
 1. **`mod_current_events.xml`**:
-   - Update the `<version>` tag to match the new version
+    - Update the `<version>` tag to match the new version
 
 2. **`update-manifest.xml`**:
-   - Update the `<version>` tag to match the new version
-   - Update the download URL to match the new version tag and filename
+    - Update the `<version>` tag to match the new version
+    - Update the download URL to match the new version tag and filename
 
 3. Commit these changes
 
@@ -132,6 +137,7 @@ npm run release:major
 ```
 
 This will:
+
 1. Generate/update `CHANGELOG.md`
 2. Bump version in `package.json`
 3. Create a git commit with the changes
@@ -151,6 +157,7 @@ npm run changelog
 ### What Gets Packaged
 
 The build script includes only the necessary files:
+
 - `mod_current_events.xml` - Module manifest
 - `services/` - Dependency injection provider
 - `src/` - Module classes (Dispatcher, Helper)
@@ -158,6 +165,7 @@ The build script includes only the necessary files:
 - `language/` - Translation files
 
 Excluded from package:
+
 - `.idea/` - IDE files
 - `.git/`, `.github/` - Git repository and workflows
 - `.build/` - Build scripts
@@ -174,11 +182,13 @@ The module includes a GitHub Actions workflow (`.github/workflows/release.yml`) 
 #### How It Works
 
 When you run `npm run release:minor` (or patch/major):
+
 1. **Changelogen** creates the GitHub release with changelog
 2. **GitHub Actions** triggers automatically on release creation
 3. **Workflow** packages the ZIP and attaches it to the release
 
 The workflow:
+
 1. Checks out the code
 2. Sets up Node.js LTS with npm caching
 3. Installs dependencies with `npm ci`

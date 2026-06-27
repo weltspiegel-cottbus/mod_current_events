@@ -2,12 +2,12 @@
   "name": "mod_current_events",
   "version": "1.0.0",
   "description": "Joomla Module zur Anzeige aktueller Veranstaltungen",
-  "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/weltspiegel-cottbus/mod_current_events.git"
   },
+  "type": "module",
   "scripts": {
     "build": "echo 'No assets to build for this module'",
     "package": "node .build/package.mjs",
