@@ -10,7 +10,6 @@
 \defined('_JEXEC') or die;
 
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Layout\LayoutHelper;
 
 /**
  * @var Joomla\Registry\Registry $params
@@ -141,11 +140,9 @@ $formatter->setPattern('EEE, dd.MM.');
                                     <strong><?= $dayLabel ?></strong><br>
                                     <?php foreach ($nextShows as $i => $show) :
                                         $showDateTime = new DateTime($show->showStart);
-                                        echo LayoutHelper::render('booking.link', [
-                                            'showId'  => $show->showId,
-                                            'label'   => $showDateTime->format('H:i'),
-                                            'options' => ['class' => 'text-decoration-none'],
-                                        ]);
+                                        echo '<a href="' . htmlspecialchars($show->bookingLink) . '" class="text-decoration-none">'
+                                            . $showDateTime->format('H:i')
+                                            . '</a>';
                                         if ($i < count($nextShows) - 1) {
                                             echo ' | ';
                                         }
