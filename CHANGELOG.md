@@ -1,6 +1,16 @@
 # Changelog
 
 
+## v1.1.0
+
+[compare changes](https://github.com/weltspiegel-cottbus/mod_current_events/compare/v1.0.0...v1.1.0)
+
+### 🏡 Chore
+
+- **mod:** Clean up fallback template, bump to v1.1.0 ([f1e13aa](https://github.com/weltspiegel-cottbus/mod_current_events/commit/f1e13aa))
+- **mod:** Use bookingLink directly in fallback template, remove LayoutHelper ([1def342](https://github.com/weltspiegel-cottbus/mod_current_events/commit/1def342))
+- Format and lint files. ([6cbd26c](https://github.com/weltspiegel-cottbus/mod_current_events/commit/6cbd26c))
+
 ## v1.0.0
 
 [compare changes](https://github.com/weltspiegel-cottbus/mod_current_events/compare/v0.4.5...v1.0.0)
