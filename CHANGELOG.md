@@ -1,6 +1,14 @@
 # Changelog
 
 
+## v1.2.0
+
+[compare changes](https://github.com/weltspiegel-cottbus/mod_current_events/compare/v1.1.0...v1.2.0)
+
+### 🚀 Enhancements
+
+- Build sections with sorted shows upfront. ([d36998d](https://github.com/weltspiegel-cottbus/mod_current_events/commit/d36998d))
+
 ## v1.1.0
 
 [compare changes](https://github.com/weltspiegel-cottbus/mod_current_events/compare/v1.0.0...v1.1.0)
