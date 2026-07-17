@@ -13,63 +13,10 @@ use Joomla\CMS\Router\Route;
 
 /**
  * @var Joomla\Registry\Registry $params
- * @var array $movies
+ * @var array $sections  Built by CurrentEventsHelper::getSections()
  */
 
-if (empty($movies) || !is_array($movies)) {
-    return;
-}
-
-$now = time();
-
-// Determine the section (3D/2D/OmU/OV) for a format variant
-$getCategory = static function ($format): string {
-    $lang = strtolower($format->language ?? '');
-    if (str_contains($lang, 'omu') || str_contains($lang, 'omü')) return 'OmU';
-    if (str_contains($lang, 'ov'))  return 'OV';
-    if ($format->is3D)              return '3D';
-    return '2D';
-};
-
-// Build categorized structure:
-// $sections[category][movieId] = ['movie' => ..., 'showsByDay' => [...]]
-$sections = ['3D' => [], '2D' => [], 'OmU' => [], 'OV' => []];
-
-foreach ($movies as $movie) {
-    foreach ($movie->formats as $format) {
-        $category = $getCategory($format);
-
-        foreach ($format->shows as $show) {
-            $showTime = strtotime($show->showStart);
-            if ($showTime < $now) {
-                continue;
-            }
-            $day = date('Y-m-d', $showTime);
-
-            if (!isset($sections[$category][$movie->movieId])) {
-                $sections[$category][$movie->movieId] = [
-                    'movie'      => $movie,
-                    'showsByDay' => [],
-                ];
-            }
-
-            $sections[$category][$movie->movieId]['showsByDay'][$day][] = $show;
-        }
-    }
-}
-
-// Sort shows within each section
-foreach ($sections as $category => &$sectionMovies) {
-    foreach ($sectionMovies as &$data) {
-        ksort($data['showsByDay']);
-    }
-}
-unset($sectionMovies, $data);
-
-// Remove empty sections
-$sections = array_filter($sections, fn($s) => !empty($s));
-
-if (empty($sections)) {
+if (empty($sections) || !is_array($sections)) {
     return;
 }
 

@@ -29,7 +29,7 @@ class CurrentEventsHelper
 	 * @throws Exception
 	 * @since   1.0.0
 	 */
-    public static function getMovies(): array|false
+    private static function getMovies(): array|false
     {
         $app = Factory::getApplication();
 
@@ -43,6 +43,24 @@ class CurrentEventsHelper
         }
 
         return $model->getItems();
+    }
+
+    /**
+     * Retrieve the current-events sections from the component.
+     *
+     * Fetches the movie list and transforms it via buildSections() — the single
+     * entry point the module's templates work with.
+     *
+     * @return  array  See buildSections()
+     *
+     * @throws Exception
+     * @since   1.3.0
+     */
+    public static function getSections(): array
+    {
+        $movies = self::getMovies();
+
+        return self::buildSections(is_array($movies) ? $movies : []);
     }
 
     /**
