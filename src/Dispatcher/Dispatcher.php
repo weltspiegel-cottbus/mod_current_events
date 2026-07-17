@@ -35,7 +35,10 @@ class Dispatcher extends AbstractModuleDispatcher
         $data = parent::getLayoutData();
 
         // Get events from the component using our helper
-        $data['movies'] = CurrentEventsHelper::getMovies();
+        $movies = CurrentEventsHelper::getMovies();
+
+        $data['movies']   = $movies;
+        $data['sections'] = CurrentEventsHelper::buildSections(is_array($movies) ? $movies : []);
 
         return $data;
     }
