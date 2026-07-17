@@ -1,6 +1,14 @@
 # Changelog
 
 
+## v1.3.0
+
+[compare changes](https://github.com/weltspiegel-cottbus/mod_current_events/compare/v1.2.0...v1.3.0)
+
+### 💅 Refactors
+
+- Omit movies data in dispatcher. Use just the prebuilt sections. ([cede118](https://github.com/weltspiegel-cottbus/mod_current_events/commit/cede118))
+
 ## v1.2.0
 
 [compare changes](https://github.com/weltspiegel-cottbus/mod_current_events/compare/v1.1.0...v1.2.0)
